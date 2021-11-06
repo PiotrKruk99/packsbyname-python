@@ -9,7 +9,10 @@ parser = ArgumentParser()
 s = "Script using Pacman's or Yay's output to search packages only by it's names. "
 s += "Python is required for scritp to work. You can launch it with ‘python3’ prefix "
 s += "or you can change script's permision by making it executable and launch directly. "
-s += "You can launch script only with 'name' argument. It will use 'pacman -Ss' by default."
+s += "You can launch script only with 'name' argument, it will use 'pacman -Ss' by default. "
+s += "For advanced search put ‘*’ character on pattern back [name*] to search only packages "
+s += "which names start with pattern or on pattern front [*name] to search only that which "
+s += "names end with pattern."
 parser.description = s
 parser.usage = '[python3] pbname.py [engine] [method] name'
 
@@ -47,7 +50,7 @@ if (args.by == 'yay ') and (a == 0):
     print('Yay was not detected. Use Pacman instead.')
     exit()
 
-cmd = args.by + args.where + args.name #creating search command from arguments
+cmd = args.by + args.where + args.name.replace('*', '') #creating search command from arguments
 out = popen(cmd).readlines() #getting output lines
 
 blue = '\033[94m'
@@ -57,7 +60,10 @@ i = 0
 while i < len(out):
     if ((out[i].startswith('local/') or out[i].startswith('aur/') or out[i].startswith('multilib/') 
     or out[i].startswith('community/') or out[i].startswith('extra/') or out[i].startswith('core/')) 
-    and (out[i].split('/')[1].split(' ')[0].find(args.name) != -1)):
-        print(blue + out[i].split('/')[0] + '/' + green + out[i].split('/')[1].replace('\n', '') + reset)
-        print(out[i+1].replace('\n', ''))
+    and (out[i].split('/')[1].split(' ')[0].find(args.name.replace('*', '')) != -1)):
+        if ((args.name.startswith('*') and out[i].split('/')[1].split(' ')[0].endswith(args.name.replace('*', ''))) 
+        or (args.name.endswith('*') and out[i].split('/')[1].split(' ')[0].startswith(args.name.replace('*', ''))) 
+        or (args.name.find('*') == -1)):
+            print(blue + out[i].split('/')[0] + '/' + green + out[i].split('/')[1].replace('\n', '') + reset)
+            print(out[i+1].replace('\n', ''))
     i += 1
