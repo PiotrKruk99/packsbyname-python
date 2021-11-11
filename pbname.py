@@ -12,12 +12,13 @@ s += "or you can change script's permision by making it executable and launch di
 s += "You can launch script only with 'name' argument, it will use 'pacman -Ss' by default. "
 s += "For advanced search put ‘*’ character on pattern back [name*] to search only packages "
 s += "which names start with pattern or on pattern front [*name] to search only that which "
-s += "names end with pattern."
+s += "names end with pattern. You can use up to 5 words to be search. Package will be displayed "
+s += "only when it's name contains all of these words. You can use '*' in any of these words."
 parser.description = s
-parser.usage = '[python3] pbname.py [engine] [method] name'
+parser.usage = '[python3] pbname.py [engine] [method] name [name ...]'
 
-s = "package name or it's part to be search"
-parser.add_argument('name', help=s)
+s = "package name or it's part to be search [additional words to be search]"
+parser.add_argument('name', nargs='+', help=s)
 
 group1 = parser.add_argument_group()
 group1.title ='engine'
@@ -39,6 +40,18 @@ args = parser.parse_args()
 
 ### Program main part. ###
 
+def checkNames(): #part of search algorithm
+    for n in args.name:
+        if out[i].split('/')[1].split(' ')[0].find(n.replace('*', '')) == -1:
+            return False
+        else:
+            if n.startswith('*') and not out[i].split('/')[1].split(' ')[0].endswith(n.replace('*', '')):
+                return False
+            else:
+                if n.endswith('*') and not out[i].split('/')[1].split(' ')[0].startswith(n.replace('*', '')):
+                    return False
+    return True
+
 a = len(popen('yay --version').read())
 b = len(popen('pacman --version').read())
 
@@ -50,7 +63,11 @@ if (args.by == 'yay ') and (a == 0):
     print('Yay was not detected. Use Pacman instead.')
     exit()
 
-cmd = args.by + args.where + args.name.replace('*', '') #creating search command from arguments
+if len(args.name) > 5:
+    print('Too many arguments to be search.')
+    exit()
+
+cmd = args.by + args.where + args.name[0].replace('*', '') #creating search command from arguments
 out = popen(cmd).readlines() #getting output lines
 
 blue = '\033[94m'
@@ -60,10 +77,7 @@ i = 0
 while i < len(out):
     if ((out[i].startswith('local/') or out[i].startswith('aur/') or out[i].startswith('multilib/') 
     or out[i].startswith('community/') or out[i].startswith('extra/') or out[i].startswith('core/')) 
-    and (out[i].split('/')[1].split(' ')[0].find(args.name.replace('*', '')) != -1)):
-        if ((args.name.startswith('*') and out[i].split('/')[1].split(' ')[0].endswith(args.name.replace('*', ''))) 
-        or (args.name.endswith('*') and out[i].split('/')[1].split(' ')[0].startswith(args.name.replace('*', ''))) 
-        or (args.name.find('*') == -1)):
-            print(blue + out[i].split('/')[0] + '/' + green + out[i].split('/')[1].replace('\n', '') + reset)
-            print(out[i+1].replace('\n', ''))
+    and checkNames()):
+        print(blue + out[i].split('/')[0] + '/' + green + out[i].split('/')[1].replace('\n', '') + reset)
+        print(out[i+1].replace('\n', ''))
     i += 1
