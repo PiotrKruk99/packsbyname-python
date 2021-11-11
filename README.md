@@ -11,7 +11,7 @@ You can search for up to 5 words same time. Package will be displayed as a resul
 
 'pbname.py -Qs python* pip' - to search by Pacman on computer for each package that name starts with 'python' and contains 'pip'
 
-'pbname.py -y *theme adwaita* gtk' - to search by Yay online for each package that name starts with 'adwaita', ends with 'theme' and contains 'gtk'
+'pbname.py -y adwaita* *theme gtk' - to search by Yay online for each package that name starts with 'adwaita', ends with 'theme' and contains 'gtk'
 
 'pbname.py pacman' - to search by Pacman online for each package that name contains 'pacman'
 
