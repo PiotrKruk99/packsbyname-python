@@ -19,6 +19,6 @@ You can search for up to 5 words same time. Package will be displayed as a resul
 
 # tips
 
-To use it more easy copy script to for example /usr/bin/ directory with sudo, make it executable and then you will can use it from any directory you want like other commands. You can change it's name to for example 'pbname' for better experience too. {sudo cp ./pbname.py /usr/bin/pbname}
+To use it more easy copy script to for example /usr/bin/ directory with sudo, make it executable and then you will can use it from any directory you want like other commands. You can change it's name to for example 'pbname' for better experience too. { sudo cp ./pbname.py /usr/bin/pbname && sudo chmod +x /usr/bin/pbname }
 
 When AUR returns error 'Too many package results' try to change searched words order.
