@@ -20,27 +20,36 @@ parser.usage = '[python3] pbname.py [engine] [method] name [name ...]'
 s = "package name or it's part to be search [additional words to be search]"
 parser.add_argument('name', nargs='+', help=s)
 
+s = "no colored output"
+parser.add_argument('--nocolors', action='store_true', help=s)
+
 group1 = parser.add_argument_group()
-group1.title ='engine'
+group1.title = 'engine'
 mutualgroup1 = group1.add_mutually_exclusive_group()
 s = 'search by Pacman'
-mutualgroup1.add_argument('-p', '--pacman', dest='by', action='store_const', const='pacman ', default='pacman ', help=s)
+mutualgroup1.add_argument('-p', '--pacman', dest='by',
+                          action='store_const', const='pacman ', default='pacman ', help=s)
 s = 'search by Yay'
-mutualgroup1.add_argument('-y', '--yay', dest='by', action='store_const', const='yay ', help=s)
+mutualgroup1.add_argument('-y', '--yay', dest='by',
+                          action='store_const', const='yay ', help=s)
 
 group2 = parser.add_argument_group()
-group2.title ='method'
+group2.title = 'method'
 mutualgroup2 = group2.add_mutually_exclusive_group()
 s = 'search each package in the sync databases for names'
-mutualgroup2.add_argument('-Ss', '--remote', dest='where', action='store_const', const='-Ss ', default='-Ss ', help=s)
+mutualgroup2.add_argument('-Ss', '--remote', dest='where',
+                          action='store_const', const='-Ss ', default='-Ss ', help=s)
 s = 'search each locally-installed package for names'
-mutualgroup2.add_argument('-Qs', '--local', dest='where', action='store_const', const='-Qs ', help=s)
+mutualgroup2.add_argument('-Qs', '--local', dest='where',
+                          action='store_const', const='-Qs ', help=s)
 
 args = parser.parse_args()
 
+
 ### Program main part. ###
 
-def checkNames(): #part of search algorithm
+
+def checkNames():  # part of search algorithm
     for n in args.name:
         if out[i].split('/')[1].split(' ')[0].find(n.replace('*', '')) == -1:
             return False
@@ -51,6 +60,7 @@ def checkNames(): #part of search algorithm
                 if n.endswith('*') and not out[i].split('/')[1].split(' ')[0].startswith(n.replace('*', '')):
                     return False
     return True
+
 
 a = len(popen('yay --version').read())
 b = len(popen('pacman --version').read())
@@ -67,17 +77,25 @@ if len(args.name) > 5:
     print('Too many arguments to be search.')
     exit()
 
-cmd = args.by + args.where + args.name[0].replace('*', '') #creating search command from arguments
-out = popen(cmd).readlines() #getting output lines
+# creating search command from arguments
+cmd = args.by + args.where + args.name[0].replace('*', '')
+out = popen(cmd).readlines()  # getting output lines
 
-blue = '\033[94m'
-green = '\033[32m'
-reset = '\033[0m'
+if not args.nocolors:
+    blue = '\033[94m'
+    green = '\033[32m'
+    reset = '\033[0m'
+else:
+    blue = ''
+    green = ''
+    reset = ''
+
 i = 0
 while i < len(out):
-    if ((out[i].startswith('local/') or out[i].startswith('aur/') or out[i].startswith('multilib/') 
-    or out[i].startswith('community/') or out[i].startswith('extra/') or out[i].startswith('core/')) 
-    and checkNames()):
-        print(blue + out[i].split('/')[0] + '/' + green + out[i].split('/')[1].replace('\n', '') + reset)
+    if ((out[i].startswith('local/') or out[i].startswith('aur/') or out[i].startswith('multilib/')
+         or out[i].startswith('community/') or out[i].startswith('extra/') or out[i].startswith('core/'))
+            and checkNames()):
+        print(blue + out[i].split('/')[0] + '/' + green +
+              out[i].split('/')[1].replace('\n', '') + reset)
         print(out[i+1].replace('\n', ''))
     i += 1
