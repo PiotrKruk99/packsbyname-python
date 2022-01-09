@@ -1,5 +1,7 @@
-06-11-2021 - added function to search names that start or end with pattern
+09-01-2022 - Paru support added
+
+20-11-2021 - added option for generating output without colors
 
 11-11-2021 - added function to search packages with multiple words
 
-20-11-2021 - added option for generating output without colors
+06-11-2021 - added function to search names that start or end with pattern
