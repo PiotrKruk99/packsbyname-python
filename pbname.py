@@ -6,8 +6,8 @@ from argparse import ArgumentParser
 ### Program help and arguments definision. ###
 
 parser = ArgumentParser()
-s = "Script using Pacman's or Yay's output to search packages only by it's names. "
-s += "Python is required for scritp to work. You can launch it with ‘python3’ prefix "
+s = "Script using Pacman's, Yay's or Paru's output to search packages only by it's names. "
+s += "Python is required for script to work. You can launch it with ‘python3’ prefix "
 s += "or you can change script's permision by making it executable and launch directly. "
 s += "You can launch script only with 'name' argument, it will use 'pacman -Ss' by default. "
 s += "For advanced search put ‘*’ character on pattern back [name*] to search only packages "
@@ -32,6 +32,10 @@ mutualgroup1.add_argument('-p', '--pacman', dest='by',
 s = 'search by Yay'
 mutualgroup1.add_argument('-y', '--yay', dest='by',
                           action='store_const', const='yay ', help=s)
+
+s = 'search by Paru'
+mutualgroup1.add_argument('-r', '--paru', dest='by',
+                          action='store_const', const='paru ', help=s)
 
 group2 = parser.add_argument_group()
 group2.title = 'method'
@@ -62,15 +66,20 @@ def checkNames():  # part of search algorithm
     return True
 
 
-a = len(popen('yay --version').read())
-b = len(popen('pacman --version').read())
+yayCheck = len(popen('yay --version').read())
+paruCheck = len(popen('paru --version').read())
+pacmanCheck = len(popen('pacman --version').read())
 
-if b == 0:
+if pacmanCheck == 0:
     print('Pacman was not detected. Application could be only used in ArchLinux and other distributions based on it.')
     exit()
 
-if (args.by == 'yay ') and (a == 0):
-    print('Yay was not detected. Use Pacman instead.')
+if (args.by == 'yay ') and (yayCheck == 0):
+    print('Yay was not detected. Use Pacman or Paru instead.')
+    exit()
+
+if (args.by == 'paru ') and (paruCheck == 0):
+    print('Paru was not detected. Use Pacman or Yay instead.')
     exit()
 
 if len(args.name) > 5:
