@@ -3,7 +3,7 @@ My try to resolve ArchLinux and other archbased distributions problem to easily 
 
 # how to search
 
-You can use Pacman (-p argument) or Yay (-y argument) to search in AUR too. For installed packages search use -Qs argument or for search in online repositories use -Ss argument. If only words to search are specified it will be by Pacman and in online repositories.
+You can use Pacman (-p argument) or Yay (-y argument) and Paru (-r argument) to search in AUR too. For installed packages search use -Qs argument or for search in online repositories use -Ss argument. If only words to search are specified it will be by Pacman and in online repositories.
 
 You can search for up to 5 words same time. Package will be displayed as a result only if it name contains all of required words.
 
