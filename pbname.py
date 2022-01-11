@@ -3,6 +3,10 @@
 from os import popen
 from argparse import ArgumentParser
 
+pacmanPrefix = 'pacman '
+yayPrefix = 'yay '
+paruPrefix = 'paru '
+
 ### Program help and arguments definision. ###
 
 parser = ArgumentParser()
@@ -28,14 +32,14 @@ group1.title = 'engine'
 mutualgroup1 = group1.add_mutually_exclusive_group()
 s = 'search by Pacman'
 mutualgroup1.add_argument('-p', '--pacman', dest='by',
-                          action='store_const', const='pacman ', default='pacman ', help=s)
+                          action='store_const', const=pacmanPrefix, default=pacmanPrefix, help=s)
 s = 'search by Yay'
 mutualgroup1.add_argument('-y', '--yay', dest='by',
-                          action='store_const', const='yay ', help=s)
+                          action='store_const', const=yayPrefix, help=s)
 
 s = 'search by Paru'
 mutualgroup1.add_argument('-r', '--paru', dest='by',
-                          action='store_const', const='paru ', help=s)
+                          action='store_const', const=paruPrefix, help=s)
 
 group2 = parser.add_argument_group()
 group2.title = 'method'
@@ -65,20 +69,25 @@ def checkNames():  # part of search algorithm
                     return False
     return True
 
+yayCheck = 0
+if args.by == yayPrefix:
+    yayCheck = len(popen('yay --version').read())
 
-yayCheck = len(popen('yay --version').read())
-paruCheck = len(popen('paru --version').read())
+paruCheck = 0
+if args.by == paruPrefix:
+    paruCheck = len(popen('paru --version').read())
+
 pacmanCheck = len(popen('pacman --version').read())
 
 if pacmanCheck == 0:
     print('Pacman was not detected. Application could be only used in ArchLinux and other distributions based on it.')
     exit()
 
-if (args.by == 'yay ') and (yayCheck == 0):
+if (args.by == yayPrefix) and (yayCheck == 0):
     print('Yay was not detected. Use Pacman or Paru instead.')
     exit()
 
-if (args.by == 'paru ') and (paruCheck == 0):
+if (args.by == paruPrefix) and (paruCheck == 0):
     print('Paru was not detected. Use Pacman or Yay instead.')
     exit()
 
